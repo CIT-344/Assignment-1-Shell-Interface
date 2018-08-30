@@ -17,7 +17,10 @@ namespace Assignment_1_Shell_Interface
         static void EnterCommandLoop()
         {
             Console.Write($"{Environment.CurrentDirectory}> ");
+
             // Read command
+            
+            
             var CommandLine = Console.ReadLine().Split(' ');
             var Command = CommandLine[0].Trim();
             var Paramaters = CommandLine.Length >= 2 ? CommandLine[1].Trim(): "";
