@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace Assignment_1_Shell_Interface
 {
@@ -10,8 +11,6 @@ namespace Assignment_1_Shell_Interface
             Console.Title = "Demo";
 
             EnterCommandLoop();
-
-
         }
 
 
@@ -21,23 +20,30 @@ namespace Assignment_1_Shell_Interface
             // Read command
             var CommandLine = Console.ReadLine().Split(' ');
             var Command = CommandLine[0].Trim();
-            var Paramaters = CommandLine.Length >= 2 ? CommandLine[1].Trim(): null;
+            var Paramaters = CommandLine.Length >= 2 ? CommandLine[1].Trim(): "";
 
             switch (Command)
             { 
                 case "pwd":
-                    Pwd();
+                    SpawnShellProcess("pwd");
                     break;
                 case "exit":
                     Exit();
                     break;
 
                 case "ls":
-                    ListDirectory();
+                    SpawnShellProcess("ls");
                     break;
 
                 case "cat":
-                    ReadFileContents(Paramaters);
+                    SpawnShellProcess(String.Concat(Command, " ", Paramaters));
+                    break;
+
+                case "clear":
+                    Console.Clear();
+                    break;
+                case "cls":
+                    Console.Clear();
                     break;
             }
 
@@ -47,43 +53,29 @@ namespace Assignment_1_Shell_Interface
             EnterCommandLoop();
         }
 
-        private static void Pwd()
-        {
-            // Write current working directory to Console
-            Console.WriteLine(Environment.CurrentDirectory);
-        }
-
         private static void Exit()
         {
             // Nice Exit code
             Environment.Exit(0);
         }
 
-        private static void ListDirectory()
+        private static void SpawnShellProcess(string command, string parameters = null)
         {
-            // List directories and files in the current dir
-            var curDir = new DirectoryInfo(Environment.CurrentDirectory);
-
-            foreach (var dirs in curDir.GetDirectories())
-            {
-                Console.WriteLine(dirs.Name);
-            }
-
-            foreach (var file in curDir.GetFiles())
-            {
-                Console.WriteLine(file.Name);
-            }
-        }
-
-        private static void ReadFileContents(params String[] Parms)
-        {
-            // Read file contents from parms variable 
-            // Only reading 1 file
-            var fileName = Parms[0];
-
+            ProcessStartInfo psi = new ProcessStartInfo("powershell");
+            psi.CreateNoWindow = true;
+            psi.RedirectStandardOutput = true;
+            psi.Arguments = command;
             
+            psi.WorkingDirectory = Environment.CurrentDirectory;
 
-            Console.WriteLine($"File Name: {Parms[0]}");
+            Process p = new Process();
+            p.StartInfo = psi;
+
+            p.Start();
+
+            var output = p.StandardOutput.ReadToEnd().Trim();
+
+            Console.WriteLine(output + "\n");
         }
     }
 }
