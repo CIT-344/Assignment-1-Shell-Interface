@@ -20,7 +20,7 @@ namespace Assignment_1_Shell_Interface
 
             // Read command
             
-            
+
             var CommandLine = Console.ReadLine().Split(' ');
             var Command = CommandLine[0].Trim();
             var Paramaters = CommandLine.Length >= 2 ? CommandLine[1].Trim(): "";
@@ -47,6 +47,9 @@ namespace Assignment_1_Shell_Interface
                     break;
                 case "cls":
                     Console.Clear();
+                    break;
+                default:
+                    Console.WriteLine("Unsupported command");
                     break;
             }
 
