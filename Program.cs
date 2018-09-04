@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Assignment_1_Shell_Interface
 {
@@ -94,6 +95,8 @@ namespace Assignment_1_Shell_Interface
 
         private static void ChangeWorkingDirectory(string paramaters)
         {
+            string pattern = @"^[a-zA-Z][:]";
+
             // Change the Environment.CurrentDirectory value
             var paths = paramaters.Split('/');
             var dirInfo = new DirectoryInfo(Environment.CurrentDirectory);
@@ -105,6 +108,12 @@ namespace Assignment_1_Shell_Interface
                 {
                     // Go up to the current parents dir
                     tempDirInfo = tempDirInfo.Parent;
+                }
+                else if (Regex.IsMatch(pathItem, pattern))
+                {
+                    // Drive change command
+                    tempDirInfo = new DirectoryInfo(String.Concat(pathItem, "/"));
+                    break; // Jump out of this loop because our drive has completely changed this is what the cmd does
                 }
                 else
                 {
@@ -118,13 +127,12 @@ namespace Assignment_1_Shell_Interface
                     else
                     {
                         // Throw some kind of error about pathing
-                        
+
                     }
                 }
             }
-
-
-            Environment.CurrentDirectory = tempDirInfo != null ? tempDirInfo.FullName : dirInfo.FullName;
+            
+            Environment.CurrentDirectory = tempDirInfo != null && tempDirInfo.Exists ? tempDirInfo.FullName : dirInfo.FullName;
 
         }
 
@@ -136,21 +144,30 @@ namespace Assignment_1_Shell_Interface
 
         private static void SpawnShellProcess(string command)
         {
-            ProcessStartInfo psi = new ProcessStartInfo("powershell");
-            psi.CreateNoWindow = true;
-            psi.RedirectStandardOutput = true;
-            psi.Arguments = command;
+            var oldTitle = Console.Title;
+            Console.Title = $"Running '{command}'";
             
-            psi.WorkingDirectory = Environment.CurrentDirectory;
+            ProcessStartInfo psi = new ProcessStartInfo("powershell")
+            {
+                CreateNoWindow = true, // Don't launch a blue powershell window
+                RedirectStandardOutput = true, // Allow catching the ouput from process
+                Arguments = command, // The literal powershell command with any params attached to the end
 
-            Process p = new Process();
-            p.StartInfo = psi;
+                WorkingDirectory = Environment.CurrentDirectory // Set the process directory to the program dir, I maintain curDirectory outside of the process
+            };
 
-            p.Start();
+            Process p = new Process
+            {
+                StartInfo = psi
+            };
 
-            var output = p.StandardOutput.ReadToEnd().Trim();
+            p.Start(); // Launch the process in the background
 
-            Console.WriteLine(output + "\n");
+            var output = p.StandardOutput.ReadToEnd().Trim(); // Read all it's output 
+
+            Console.WriteLine(output + "\n"); // Write output to console window 
+
+            Console.Title = oldTitle;
         }
     }
 }
