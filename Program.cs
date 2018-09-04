@@ -134,7 +134,7 @@ namespace Assignment_1_Shell_Interface
             Environment.Exit(0);
         }
 
-        private static void SpawnShellProcess(string command, string parameters = null)
+        private static void SpawnShellProcess(string command)
         {
             ProcessStartInfo psi = new ProcessStartInfo("powershell");
             psi.CreateNoWindow = true;
