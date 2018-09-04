@@ -93,7 +93,7 @@ namespace Assignment_1_Shell_Interface
 
         private static void ChangeWorkingDirectory(string paramaters)
         {
-            string pattern = @"^[a-zA-Z][:]";
+            string pattern = @"^[A-Z][:]"; // Catch things like C: D: Z: not AB: etc
 
             // Change the Environment.CurrentDirectory value
             var paths = paramaters.Split('/');
