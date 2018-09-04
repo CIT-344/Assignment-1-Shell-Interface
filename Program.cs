@@ -23,8 +23,6 @@ namespace Assignment_1_Shell_Interface
             Console.Write($"{Environment.CurrentDirectory}> ");
 
             // Read command
-            
-
             var CommandLine = Console.ReadLine().Split(' ');
             var Command = CommandLine[0].Trim();
             var Paramaters = CommandLine.Length >= 2 ? BuildParams(CommandLine.Skip(1)): "";
