@@ -112,6 +112,10 @@ namespace Assignment_1_Shell_Interface
                     // Drive change command
                     tempDirInfo = new DirectoryInfo(String.Concat(pathItem, "/"));
                     break; // Jump out of this loop because our drive has completely changed this is what the cmd does
+                } else if (paramaters.Trim().Length == 0) // Nothing was sent in
+                {
+                    tempDirInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+                    break;
                 }
                 else
                 {
