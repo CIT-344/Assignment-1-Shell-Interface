@@ -129,7 +129,7 @@ namespace Assignment_1_Shell_Interface
                     else
                     {
                         // Throw some kind of error about pathing
-
+                        Console.WriteLine("Path supplied does not exist");
                     }
                 }
             }
